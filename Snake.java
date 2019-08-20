@@ -8,6 +8,7 @@ public class Snake {
     private JPanel rootPanel;
     private JLabel snakeTitle;
     private JButton startGameButton;
+
     private JLabel textLabel;
 
     public Snake() {
