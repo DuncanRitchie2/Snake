@@ -11,8 +11,8 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class Gameplay extends JPanel implements KeyListener, ActionListener {
-    private ArrayList snakeXCoords = new ArrayList<Integer>();
-    private ArrayList snakeYCoords = new ArrayList<Integer>();
+    private ArrayList snakeXCoords = new ArrayList<Integer>(1);
+    private ArrayList snakeYCoords = new ArrayList<Integer>(1);
 
     private ImageIcon titleImage = new ImageIcon("assets/snaketitle.jpg");
     private ImageIcon leftMouth = new ImageIcon("assets/leftmouth.png");
@@ -30,15 +30,22 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     private Timer timer;
     private int delay = 1000;
 
+    public int moves = 0;
+
     public Gameplay() {
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         timer = new Timer(delay, this);
         timer.start();
+
+        Integer integer = 1;
+        snakeXCoords.add(integer);
+        snakeYCoords.add(integer);
     }
 
     public void paint(Graphics g) {
+
         g.setColor(Color.white);
         g.drawRect(24,10,851,55);
 
@@ -76,7 +83,23 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-
+        int code = keyEvent.getKeyCode();
+        if (code == KeyEvent.VK_RIGHT && direction != DIRECTIONS.LEFT) {
+            moves++;
+            direction = DIRECTIONS.RIGHT;
+        }
+        else if (code == KeyEvent.VK_LEFT && direction != DIRECTIONS.RIGHT) {
+            moves++;
+            direction = DIRECTIONS.LEFT;
+        }
+        else if (code == KeyEvent.VK_UP && direction != DIRECTIONS.DOWN) {
+            moves++;
+            direction = DIRECTIONS.UP;
+    }
+        else if (code == KeyEvent.VK_DOWN && direction != DIRECTIONS.UP) {
+            moves++;
+            direction = DIRECTIONS.DOWN;
+        }
     }
 
     @Override
@@ -86,6 +109,24 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-
+        timer.start();
+        for (int i = snakeXCoords.size()-1; i > 0; i--) {
+            snakeXCoords.set(i,snakeXCoords.get(i-1));
+            snakeYCoords.set(i,snakeYCoords.get(i-1));
+        }
+        switch (direction) {
+            case RIGHT:
+                snakeXCoords.set(0,(int)snakeXCoords.get(0)+1);
+                break;
+            case LEFT:
+                snakeXCoords.set(0,(int)snakeXCoords.get(0)-1);
+                break;
+            case UP:
+                snakeYCoords.set(0,(int)snakeYCoords.get(0)+1);
+                break;
+            case DOWN:
+                snakeYCoords.set(0,(int)snakeYCoords.get(0)-1);
+        }
+        repaint();
     }
 }
