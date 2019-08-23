@@ -61,14 +61,17 @@ public class Board extends JPanel implements ActionListener {
         draw(g);
     }
 
-    // Draw our Snake & Food (Called on repaint()).
+    // Draw our Snake & Food, called on repaint().
     void draw(Graphics g) {
-        // Only draw if the game is running / the snake is alive
-        if (inGame == true) {
-            g.setColor(Color.green);
-            g.fillRect(food.getFoodX(), food.getFoodY(), PIXELSIZE, PIXELSIZE); // food
 
-            // Draw our snake.
+        // Only draw if the game is running
+        if (inGame == true) {
+
+            // Draw the food.
+            g.setColor(Color.green);
+            g.fillRect(food.getFoodX(), food.getFoodY(), PIXELSIZE, PIXELSIZE);
+
+            // Draw the snake.
             for (int i = 0; i < snake.getJoints(); i++) {
                 // Snake's head
                 if (i == 0) {
@@ -98,24 +101,22 @@ public class Board extends JPanel implements ActionListener {
             snake.setSnakeX(BOARDWIDTH / 2);
             snake.setSnakeY(BOARDHEIGHT / 2);
         }
-        // Start off our snake moving right
+        // Start off our snake moving right.
         snake.setMovingRight(true);
 
-        // Generate our first 'food'
+        // Generate our first Food.
         food.createFood();
 
-        // set the timer to record our game's speed / make the game move
+        // set the timer to start the snake moving.
         timer = new Timer(speed, this);
         timer.start();
     }
 
-    // if our snake is in the close proximity of the food..
+    // If our snake is in the close proximity of the food.
     void checkFoodCollisions() {
 
         if ((proximity(snake.getSnakeX(0), food.getFoodX(), 20))
                 && (proximity(snake.getSnakeY(0), food.getFoodY(), 20))) {
-
-            System.out.println("intersection");
             // Add a 'joint' to our snake
             snake.setJoints(snake.getJoints() + 1);
             // Create new food
@@ -123,17 +124,17 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    // Used to check collisions with snake's self and board edges
+    // Used to check collisions with snake's self.
+    // Collisions with the walls are handled by Snake.move() so the snake reappears on the other side.
     void checkCollisions() {
 
-        // If the snake hits its own joints..
-        for (int i = snake.getJoints(); i > 0; i--) {
-
-            // Snake cant intersect with itself if it's not larger than 5
-            if ((i > 5)
-                    && (snake.getSnakeX(0) == snake.getSnakeX(i) && (snake
-                            .getSnakeY(0) == snake.getSnakeY(i)))) {
-                inGame = false; // then the game ends
+        // If the snake hits its own joints
+        // Snake can only intersect with itself if it's longer than 5 joints,
+        // so we check every joint after the 5th for collision with the head.
+        for (int i = snake.getJoints(); i > 5; i--) {
+            if (snake.getSnakeX(0) == snake.getSnakeX(i)
+                    && (snake.getSnakeY(0) == snake.getSnakeY(i))) {
+                inGame = false; // End the game.
             }
         }
 

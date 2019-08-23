@@ -5,8 +5,9 @@ import javax.swing.*;
 public class Game extends JFrame {
 
     Game() {
+        setVisible(true);
         add(new Board());
-        setResizable(true);
+        setResizable(false);
         pack();
 
         setTitle("Snake");

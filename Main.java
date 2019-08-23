@@ -12,7 +12,6 @@ public class Main extends JFrame {
             @Override
             public void run() {
                 JFrame frame = new Game();
-                frame.setVisible(true);
             }
         });
     }
