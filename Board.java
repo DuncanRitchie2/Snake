@@ -37,14 +37,23 @@ public class Board extends JPanel implements ActionListener {
     // The interval after which the snake moves, in milliseconds.
     private static int speed = 200;
 
-    // Instances of our snake & food so we can use their methods.
-    private Snake snake = new Snake();
+    // Instances of our snake & food.
+    private Snake snake;
     private Food food = new Food();
+
+    // Colours
+    private Color bkgdColour = new Color(241,217,192);
+    private Color foodColour = new Color(139,85,86);
+    private Color headColour = new Color(57,85,32);
+    private Color bodyColour = new Color(102,173,71);
+    private Color textColour1 = new Color(93,17,49);
+    private Color textColour2 = new Color(164,28,87);
+    private Color textColour3 = new Color(40,12,23);
 
     public Board() {
 
         addKeyListener(new Keys());
-        setBackground(Color.BLACK);
+        setBackground(bkgdColour);
         setFocusable(true);
 
         setPreferredSize(new Dimension(BOARDWIDTH*CELLSIZE, BOARDHEIGHT*CELLSIZE));
@@ -67,22 +76,30 @@ public class Board extends JPanel implements ActionListener {
         if (inGame == true) {
 
             // Draw the food.
-            g.setColor(Color.green);
+            g.setColor(foodColour);
             g.fillRect(food.getFoodX()*CELLSIZE, food.getFoodY()*CELLSIZE, CELLSIZE, CELLSIZE);
 
             // Draw the snake.
-            for (int i = 0; i < snake.getJoints(); i++) {
+            for (int i = 0; i < snake.getLength(); i++) {
                 // Snake's head
                 if (i == 0) {
-                    g.setColor(Color.DARK_GRAY);
+                    g.setColor(headColour);
                     g.fillRect(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
                             CELLSIZE, CELLSIZE);
+                    g.setColor(bodyColour);
                     // Body of snake
                 } else {
                     g.fillRect(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
                             CELLSIZE, CELLSIZE);
                 }
             }
+
+            // Draw text announcing the snake's length.
+            String lengthMessage = "Length of snake: "+snake.getLength();
+            g.setColor(textColour3);
+            Font font = new Font("Alegreya", Font.BOLD, 14);
+            g.drawString(lengthMessage, CELLSIZE,
+                    (int)(BOARDHEIGHT-0.5)*CELLSIZE);
 
             // Sync our graphics together
             Toolkit.getDefaultToolkit().sync();
@@ -93,15 +110,9 @@ public class Board extends JPanel implements ActionListener {
     }
 
     void initializeGame() {
-        snake.setJoints(3); // set our snake's initial size
+        snake = new Snake();
 
-        // Create our snake's body
-        for (int i = 0; i < snake.getJoints(); i++) {
-            snake.setSnakeX(BOARDWIDTH / 2);
-            snake.setSnakeY(BOARDHEIGHT / 2);
-        }
-
-        // Generate our first Food.
+        // Generate our first food.
         food.createFood();
 
         // set the timer to start the snake moving.
@@ -112,11 +123,11 @@ public class Board extends JPanel implements ActionListener {
     // If our snake is in the close proximity of the food.
     void checkFoodCollisions() {
 
-        if ((proximity(snake.getSnakeX(0), food.getFoodX(), 1))
-                && (proximity(snake.getSnakeY(0), food.getFoodY(), 1))) {
-            // Add a 'joint' to our snake
-            snake.setJoints(snake.getJoints() + 1);
-            // Create new food
+        if ((proximity(snake.getSnakeX(0), food.getFoodX(), 0))
+                && (proximity(snake.getSnakeY(0), food.getFoodY(), 0))) {
+            // Add a joint to our snake.
+            snake.addJoint();
+            // Create new food.
             food.createFood();
         }
     }
@@ -125,17 +136,22 @@ public class Board extends JPanel implements ActionListener {
     // Collisions with the walls are handled by Snake.move() so the snake reappears on the other side.
     void checkCollisions() {
 
-        // If the snake hits its own joints
+        // If the snake hits its own joints...
         // Snake can only intersect with itself if it's longer than 3 joints,
         // so we check every joint after the 3rd for collision with the head.
-        for (int i = snake.getJoints(); i > 3; i--) {
+        for (int i = snake.getLength()-1; i > 3; i--) {
             if (snake.getSnakeX(0) == snake.getSnakeX(i)
                     && (snake.getSnakeY(0) == snake.getSnakeY(i))) {
                 inGame = false; // End the game.
             }
         }
 
-        // If the game has ended, then we can stop our timer
+        // If the snake hits the food...
+        if ((food.getFoodX() == snake.getSnakeX(0)) && (food.getFoodY() == snake.getSnakeY(0))) {
+            food.createFood();
+        }
+
+        // If the game has ended, then we stop our timer.
         if (!inGame) {
             timer.stop();
         }
@@ -145,7 +161,7 @@ public class Board extends JPanel implements ActionListener {
 
         // Create a two-line message telling the player the game is over
         String message1 = "Game over!";
-        String message2 = "Your snake bit itself. Press Enter to reset.";
+        String message2 = "Your snake bit itself. It was "+snake.getLength()+" joints long. Press Enter to reset.";
 
         // Create new font instances.
         Font font1 = new Font("Alegreya", Font.BOLD, 18);
@@ -153,14 +169,19 @@ public class Board extends JPanel implements ActionListener {
         FontMetrics metrics1 = getFontMetrics(font1);
         FontMetrics metrics2 = getFontMetrics(font2);
 
-        // Set the color of the text to orange, and set the font to our instance.
-        g.setColor(Color.orange);
+        // Set the color & font of the first line of text.
+        g.setColor(textColour1);
         g.setFont(font1);
 
-        // Draw the message to the board
+        // Draw the first line of the message to the board
         g.drawString(message1, (BOARDWIDTH*CELLSIZE - metrics1.stringWidth(message1)) / 2,
                 (BOARDHEIGHT-2)*CELLSIZE / 2);
+
+        // Set the color & font of the second line.
+        g.setColor(textColour2);
         g.setFont(font2);
+
+        // Draw the second line to the board
         g.drawString(message2, (BOARDWIDTH*CELLSIZE - metrics2.stringWidth(message2)) / 2,
                 BOARDHEIGHT*CELLSIZE / 2);
 
