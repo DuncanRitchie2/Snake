@@ -143,19 +143,25 @@ public class Board extends JPanel implements ActionListener {
 
     void endGame(Graphics g) {
 
-        // Create a message telling the player the game is over
-        String message = "Game over. Press Enter to reset.";
+        // Create a two-line message telling the player the game is over
+        String message1 = "Game over!";
+        String message2 = "Your snake bit itself. Press Enter to reset.";
 
-        // Create a new font instance.
-        Font font = new Font("Alegreya", Font.BOLD, 14);
-        FontMetrics metrics = getFontMetrics(font);
+        // Create new font instances.
+        Font font1 = new Font("Alegreya", Font.BOLD, 18);
+        Font font2 = new Font("Alegreya", Font.BOLD, 14);
+        FontMetrics metrics1 = getFontMetrics(font1);
+        FontMetrics metrics2 = getFontMetrics(font2);
 
         // Set the color of the text to orange, and set the font to our instance.
         g.setColor(Color.orange);
-        g.setFont(font);
+        g.setFont(font1);
 
         // Draw the message to the board
-        g.drawString(message, (BOARDWIDTH*CELLSIZE - metrics.stringWidth(message)) / 2,
+        g.drawString(message1, (BOARDWIDTH*CELLSIZE - metrics1.stringWidth(message1)) / 2,
+                (BOARDHEIGHT-2)*CELLSIZE / 2);
+        g.setFont(font2);
+        g.drawString(message2, (BOARDWIDTH*CELLSIZE - metrics2.stringWidth(message2)) / 2,
                 BOARDHEIGHT*CELLSIZE / 2);
 
         System.out.println("Game Ended");
