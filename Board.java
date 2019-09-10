@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,6 +51,9 @@ public class Board extends JPanel implements ActionListener {
     private Color textColour2 = new Color(164,28,87);
     private Color textColour3 = new Color(40,12,23);
 
+//    // Images
+//    private Image headImage = Toolkit.getDefaultToolkit().getImage("snakeImage.png");
+
     public Board() {
 
         addKeyListener(new Keys());
@@ -73,7 +77,7 @@ public class Board extends JPanel implements ActionListener {
     void draw(Graphics g) {
 
         // Only draw if the game is running
-        if (inGame == true) {
+        if (inGame) {
 
             // Draw the food.
             g.setColor(foodColour);
@@ -84,6 +88,7 @@ public class Board extends JPanel implements ActionListener {
                 // Snake's head
                 if (i == 0) {
                     g.setColor(headColour);
+//                    g.drawImage(headImage,snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE, CELLSIZE, CELLSIZE,null);
                     g.fillRect(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
                             CELLSIZE, CELLSIZE);
                     g.setColor(bodyColour);
@@ -101,10 +106,10 @@ public class Board extends JPanel implements ActionListener {
             g.drawString(lengthMessage, CELLSIZE,
                     (int)(BOARDHEIGHT-0.5)*CELLSIZE);
 
-            // Sync our graphics together
+            // Sync our graphics together.
             Toolkit.getDefaultToolkit().sync();
         } else {
-            // If we're not alive, then we end our game
+            // If we're not alive, then we end our game.
             endGame(g);
         }
     }
@@ -115,7 +120,7 @@ public class Board extends JPanel implements ActionListener {
         // Generate our first food.
         food.createFood(snake);
 
-        // set the timer to start the snake moving.
+        // Set the timer to start the snake moving.
         timer = new Timer(speed, this);
         timer.start();
     }
@@ -173,7 +178,7 @@ public class Board extends JPanel implements ActionListener {
         g.setColor(textColour1);
         g.setFont(font1);
 
-        // Draw the first line of the message to the board
+        // Draw the first line of the message to the board.
         g.drawString(message1, (BOARDWIDTH*CELLSIZE - metrics1.stringWidth(message1)) / 2,
                 (BOARDHEIGHT-2)*CELLSIZE / 2);
 
@@ -181,7 +186,7 @@ public class Board extends JPanel implements ActionListener {
         g.setColor(textColour2);
         g.setFont(font2);
 
-        // Draw the second line to the board
+        // Draw the second line to the board.
         g.drawString(message2, (BOARDWIDTH*CELLSIZE - metrics2.stringWidth(message2)) / 2,
                 BOARDHEIGHT*CELLSIZE / 2);
 
