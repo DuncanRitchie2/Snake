@@ -16,8 +16,8 @@ import javax.swing.Timer;
 public class Board extends JPanel implements ActionListener {
 
     // Holds height and width of the window
-    private final static int BOARDWIDTH = 1000;
-    private final static int BOARDHEIGHT = 500;
+    private final static int BOARDWIDTH = 40;
+    private final static int BOARDHEIGHT = 20;
 
     // Used to represent pixel size of food & our snake's joints
     private final static int PIXELSIZE = 25;
@@ -26,8 +26,7 @@ public class Board extends JPanel implements ActionListener {
     // We don't want less, because the game would end prematurely.
     // We don't more because there would be no way to let the player win.
 
-    private final static int TOTALPIXELS = (BOARDWIDTH * BOARDHEIGHT)
-            / (PIXELSIZE * PIXELSIZE);
+    private final static int TOTALPIXELS = (BOARDWIDTH * BOARDHEIGHT);
 
     // Check to see if the game is running
     private boolean inGame = true;
@@ -48,7 +47,7 @@ public class Board extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         setFocusable(true);
 
-        setPreferredSize(new Dimension(BOARDWIDTH, BOARDHEIGHT));
+        setPreferredSize(new Dimension(BOARDWIDTH*PIXELSIZE, BOARDHEIGHT*PIXELSIZE));
 
         initializeGame();
     }
@@ -69,18 +68,18 @@ public class Board extends JPanel implements ActionListener {
 
             // Draw the food.
             g.setColor(Color.green);
-            g.fillRect(food.getFoodX(), food.getFoodY(), PIXELSIZE, PIXELSIZE);
+            g.fillRect(food.getFoodX()*PIXELSIZE, food.getFoodY()*PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
             // Draw the snake.
             for (int i = 0; i < snake.getJoints(); i++) {
                 // Snake's head
                 if (i == 0) {
                     g.setColor(Color.DARK_GRAY);
-                    g.fillRect(snake.getSnakeX(i), snake.getSnakeY(i),
+                    g.fillRect(snake.getSnakeX(i)*PIXELSIZE, snake.getSnakeY(i)*PIXELSIZE,
                             PIXELSIZE, PIXELSIZE);
                     // Body of snake
                 } else {
-                    g.fillRect(snake.getSnakeX(i), snake.getSnakeY(i),
+                    g.fillRect(snake.getSnakeX(i)*PIXELSIZE, snake.getSnakeY(i)*PIXELSIZE,
                             PIXELSIZE, PIXELSIZE);
                 }
             }
@@ -115,8 +114,8 @@ public class Board extends JPanel implements ActionListener {
     // If our snake is in the close proximity of the food.
     void checkFoodCollisions() {
 
-        if ((proximity(snake.getSnakeX(0), food.getFoodX(), 20))
-                && (proximity(snake.getSnakeY(0), food.getFoodY(), 20))) {
+        if ((proximity(snake.getSnakeX(0), food.getFoodX(), 1))
+                && (proximity(snake.getSnakeY(0), food.getFoodY(), 1))) {
             // Add a 'joint' to our snake
             snake.setJoints(snake.getJoints() + 1);
             // Create new food
@@ -158,8 +157,8 @@ public class Board extends JPanel implements ActionListener {
         g.setFont(font);
 
         // Draw the message to the board
-        g.drawString(message, (BOARDWIDTH - metrics.stringWidth(message)) / 2,
-                BOARDHEIGHT / 2);
+        g.drawString(message, (BOARDWIDTH*PIXELSIZE - metrics.stringWidth(message)) / 2,
+                BOARDHEIGHT*PIXELSIZE / 2);
 
         System.out.println("Game Ended");
 
@@ -168,16 +167,13 @@ public class Board extends JPanel implements ActionListener {
     // Run constantly as long as we're in game.
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (inGame == true) {
+        if (inGame) {
 
             checkFoodCollisions();
             checkCollisions();
             snake.move();
-
-            System.out.println(snake.getSnakeX(0) + " " + snake.getSnakeY(0)
-                    + " " + food.getFoodX() + ", " + food.getFoodY());
         }
-        // Repaint or 'render' our screen
+        // Re-render our screen.
         repaint();
     }
 
@@ -212,7 +208,7 @@ public class Board extends JPanel implements ActionListener {
                 snake.setMovingLeft(false);
             }
 
-            if ((key == KeyEvent.VK_ENTER) && (inGame == false)) {
+            if ((key == KeyEvent.VK_ENTER) && (!inGame)) {
 
                 inGame = true;
                 snake.setMovingDown(false);
@@ -229,11 +225,11 @@ public class Board extends JPanel implements ActionListener {
         return Math.abs((long) a - b) <= closeness;
     }
 
-    public static int getAllDots() {
-        return TOTALPIXELS;
-    }
+    public static int getAllDots() {return TOTALPIXELS;}
 
-    public static int getDotSize() {
-        return PIXELSIZE;
-    }
+    public static int getPixelSize() {return PIXELSIZE;}
+
+    public static int getBoardWidth() {return BOARDWIDTH;}
+
+    public static int getBoardHeight() {return BOARDHEIGHT;}
 }

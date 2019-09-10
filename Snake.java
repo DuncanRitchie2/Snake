@@ -2,7 +2,7 @@ package Snake;
 
 public class Snake {
 
-    // Stores the joints / body part locations for our snake
+    // Stores the joints for our snake.
     private final int[] x = new int[Board.getAllDots()];
     private final int[] y = new int[Board.getAllDots()];
 
@@ -12,8 +12,7 @@ public class Snake {
     private boolean movingUp = false;
     private boolean movingDown = false;
 
-    private int joints = 0; // Stores # of dots / joints the snake has (starts
-    // with 3)
+    private int joints = 0; // The number of joints in the snake; starts at 3.
 
     public int getSnakeX(int index) {
         return x[index];
@@ -73,50 +72,45 @@ public class Snake {
 
     public void move() {
         for (int i = joints; i > 0; i--) {
-
-            // Moves the joints of the snake 'up the chain'
-            // Meaning, the joint of the snake all move up one
+            // Moves every joint of the snake to the position of the previous joint.
             x[i] = x[(i - 1)];
             y[i] = y[(i - 1)];
         }
 
         // Moves snake to the left
         if (movingLeft) {
-            x[0] -= Board.getDotSize();
+            x[0]--;
         }
         // To the right
         if (movingRight) {
-            x[0] += Board.getDotSize();
+            x[0]++;
         }
         // Down
         if (movingDown) {
-            y[0] += Board.getDotSize();
+            y[0]++;
         }
         // And finally up
         if (movingUp) {
-            y[0] -= Board.getDotSize();
+            y[0]--;
         }
 
 
 
         // If the snake intersects with the board edges, it wraps around!
-        if (getSnakeY(0) >= 500) {
+        if (getSnakeY(0) >= Board.getBoardHeight()) {
             setSnakeY(0);
         }
 
         if (getSnakeY(0) < 0) {
-            setSnakeY(500);
+            setSnakeY(Board.getBoardHeight()-1);
         }
 
-        if (getSnakeX(0) >= 1000) {
+        if (getSnakeX(0) >= Board.getBoardWidth()) {
             setSnakeX(0);
         }
 
         if (getSnakeX(0) < 0) {
-            setSnakeX(975);
+            setSnakeX(Board.getBoardWidth()-1);
         }
-
-        // Dotsize represents the size of the joint, so a pixel of DOTSIZE
-        // gets added on to the snake in that direction
     }
 }

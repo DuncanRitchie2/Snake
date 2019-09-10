@@ -10,7 +10,7 @@ public class Game extends JFrame {
         setResizable(false);
         pack();
 
-        setTitle("Snake");
+        setTitle("Duncan's Snake Game");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
