@@ -123,8 +123,8 @@ public class Board extends JPanel implements ActionListener {
     // If our snake is in the close proximity of the food.
     void checkFoodCollisions() {
 
-        if ((proximity(snake.getSnakeX(0), food.getFoodX(), 0))
-                && (proximity(snake.getSnakeY(0), food.getFoodY(), 0))) {
+        if ((snake.getSnakeX(0) == food.getFoodX())
+                && (snake.getSnakeY(0) == food.getFoodY())) {
             // Add a joint to our snake.
             snake.addJoint();
             // Create new food.
@@ -232,10 +232,6 @@ public class Board extends JPanel implements ActionListener {
                 initialiseGame();
             }
         }
-    }
-
-    private boolean proximity(int a, int b, int closeness) {
-        return Math.abs((long) a - b) <= closeness;
     }
 
     public static int getBoardWidth() {return BOARDWIDTH;}
