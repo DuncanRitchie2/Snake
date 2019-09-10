@@ -35,7 +35,7 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
 
     // The interval after which the snake moves, in milliseconds.
-    private static int speed = 200;
+    private static int speed = 125;
 
     // Instances of our snake & food.
     private Snake snake;
@@ -58,7 +58,7 @@ public class Board extends JPanel implements ActionListener {
 
         setPreferredSize(new Dimension(BOARDWIDTH*CELLSIZE, BOARDHEIGHT*CELLSIZE));
 
-        initializeGame();
+        initialiseGame();
     }
 
     // Used to paint our components to the screen
@@ -109,11 +109,11 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    void initializeGame() {
+    void initialiseGame() {
         snake = new Snake();
 
         // Generate our first food.
-        food.createFood();
+        food.createFood(snake);
 
         // set the timer to start the snake moving.
         timer = new Timer(speed, this);
@@ -128,7 +128,7 @@ public class Board extends JPanel implements ActionListener {
             // Add a joint to our snake.
             snake.addJoint();
             // Create new food.
-            food.createFood();
+            food.createFood(snake);
         }
     }
 
@@ -148,7 +148,7 @@ public class Board extends JPanel implements ActionListener {
 
         // If the snake hits the food...
         if ((food.getFoodX() == snake.getSnakeX(0)) && (food.getFoodY() == snake.getSnakeY(0))) {
-            food.createFood();
+            food.createFood(snake);
         }
 
         // If the game has ended, then we stop our timer.
@@ -229,7 +229,7 @@ public class Board extends JPanel implements ActionListener {
 
                 inGame = true;
 
-                initializeGame();
+                initialiseGame();
             }
         }
     }
@@ -237,10 +237,6 @@ public class Board extends JPanel implements ActionListener {
     private boolean proximity(int a, int b, int closeness) {
         return Math.abs((long) a - b) <= closeness;
     }
-
-    public static int getAllDots() {return TOTALPIXELS;}
-
-    public static int getCellSize() {return CELLSIZE;}
 
     public static int getBoardWidth() {return BOARDWIDTH;}
 
