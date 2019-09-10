@@ -6,11 +6,13 @@ public class Snake {
     private final int[] x = new int[Board.getAllDots()];
     private final int[] y = new int[Board.getAllDots()];
 
+    // Enum for possible directions.
+    public enum DIRECTIONS {
+        UP, RIGHT, DOWN, LEFT
+    }
+
     // Stores direction of our snake
-    private boolean movingLeft = false;
-    private boolean movingRight = false;
-    private boolean movingUp = false;
-    private boolean movingDown = false;
+    private DIRECTIONS direction = DIRECTIONS.RIGHT;
 
     private int joints = 0; // The number of joints in the snake; starts at 3.
 
@@ -30,36 +32,12 @@ public class Snake {
         y[0] = i;
     }
 
-    public boolean isMovingLeft() {
-        return movingLeft;
+    public void setDirection(DIRECTIONS dir) {
+        direction = dir;
     }
 
-    public void setMovingLeft(boolean movingLeft) {
-        this.movingLeft = movingLeft;
-    }
-
-    public boolean isMovingRight() {
-        return movingRight;
-    }
-
-    public void setMovingRight(boolean movingRight) {
-        this.movingRight = movingRight;
-    }
-
-    public boolean isMovingUp() {
-        return movingUp;
-    }
-
-    public void setMovingUp(boolean movingUp) {
-        this.movingUp = movingUp;
-    }
-
-    public boolean isMovingDown() {
-        return movingDown;
-    }
-
-    public void setMovingDown(boolean movingDown) {
-        this.movingDown = movingDown;
+    public DIRECTIONS getDirection() {
+        return direction;
     }
 
     public int getJoints() {
@@ -77,24 +55,19 @@ public class Snake {
             y[i] = y[(i - 1)];
         }
 
-        // Moves snake to the left
-        if (movingLeft) {
-            x[0]--;
+        switch (direction) {
+            case UP:
+                y[0]--;
+                break;
+            case RIGHT:
+                x[0]++;
+                break;
+            case DOWN:
+                y[0]++;
+                break;
+            case LEFT:
+                x[0]--;
         }
-        // To the right
-        if (movingRight) {
-            x[0]++;
-        }
-        // Down
-        if (movingDown) {
-            y[0]++;
-        }
-        // And finally up
-        if (movingUp) {
-            y[0]--;
-        }
-
-
 
         // If the snake intersects with the board edges, it wraps around!
         if (getSnakeY(0) >= Board.getBoardHeight()) {

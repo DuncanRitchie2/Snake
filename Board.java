@@ -15,12 +15,12 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
-    // Holds height and width of the window
+    // Holds height and width of the window in cells.
     private final static int BOARDWIDTH = 40;
     private final static int BOARDHEIGHT = 20;
 
-    // Used to represent pixel size of food & our snake's joints
-    private final static int PIXELSIZE = 25;
+    // Width and height of food and every snake-joint; window size will be a multiple.
+    private final static int CELLSIZE = 25;
 
     // The total amount of pixels the game could possibly have.
     // We don't want less, because the game would end prematurely.
@@ -28,16 +28,16 @@ public class Board extends JPanel implements ActionListener {
 
     private final static int TOTALPIXELS = (BOARDWIDTH * BOARDHEIGHT);
 
-    // Check to see if the game is running
+    // Check to see if the game is running.
     private boolean inGame = true;
 
-    // Timer used to record tick times
+    // Timer used to record tick times.
     private Timer timer;
 
     // The interval after which the snake moves, in milliseconds.
     private static int speed = 200;
 
-    // Instances of our snake & food so we can use their methods
+    // Instances of our snake & food so we can use their methods.
     private Snake snake = new Snake();
     private Food food = new Food();
 
@@ -47,7 +47,7 @@ public class Board extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         setFocusable(true);
 
-        setPreferredSize(new Dimension(BOARDWIDTH*PIXELSIZE, BOARDHEIGHT*PIXELSIZE));
+        setPreferredSize(new Dimension(BOARDWIDTH*CELLSIZE, BOARDHEIGHT*CELLSIZE));
 
         initializeGame();
     }
@@ -68,19 +68,19 @@ public class Board extends JPanel implements ActionListener {
 
             // Draw the food.
             g.setColor(Color.green);
-            g.fillRect(food.getFoodX()*PIXELSIZE, food.getFoodY()*PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            g.fillRect(food.getFoodX()*CELLSIZE, food.getFoodY()*CELLSIZE, CELLSIZE, CELLSIZE);
 
             // Draw the snake.
             for (int i = 0; i < snake.getJoints(); i++) {
                 // Snake's head
                 if (i == 0) {
                     g.setColor(Color.DARK_GRAY);
-                    g.fillRect(snake.getSnakeX(i)*PIXELSIZE, snake.getSnakeY(i)*PIXELSIZE,
-                            PIXELSIZE, PIXELSIZE);
+                    g.fillRect(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
+                            CELLSIZE, CELLSIZE);
                     // Body of snake
                 } else {
-                    g.fillRect(snake.getSnakeX(i)*PIXELSIZE, snake.getSnakeY(i)*PIXELSIZE,
-                            PIXELSIZE, PIXELSIZE);
+                    g.fillRect(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
+                            CELLSIZE, CELLSIZE);
                 }
             }
 
@@ -100,8 +100,6 @@ public class Board extends JPanel implements ActionListener {
             snake.setSnakeX(BOARDWIDTH / 2);
             snake.setSnakeY(BOARDHEIGHT / 2);
         }
-        // Start off our snake moving right.
-        snake.setMovingRight(true);
 
         // Generate our first Food.
         food.createFood();
@@ -128,9 +126,9 @@ public class Board extends JPanel implements ActionListener {
     void checkCollisions() {
 
         // If the snake hits its own joints
-        // Snake can only intersect with itself if it's longer than 5 joints,
-        // so we check every joint after the 5th for collision with the head.
-        for (int i = snake.getJoints(); i > 5; i--) {
+        // Snake can only intersect with itself if it's longer than 3 joints,
+        // so we check every joint after the 3rd for collision with the head.
+        for (int i = snake.getJoints(); i > 3; i--) {
             if (snake.getSnakeX(0) == snake.getSnakeX(i)
                     && (snake.getSnakeY(0) == snake.getSnakeY(i))) {
                 inGame = false; // End the game.
@@ -146,19 +144,19 @@ public class Board extends JPanel implements ActionListener {
     void endGame(Graphics g) {
 
         // Create a message telling the player the game is over
-        String message = "Game over";
+        String message = "Game over. Press Enter to reset.";
 
-        // Create a new font instance
+        // Create a new font instance.
         Font font = new Font("Alegreya", Font.BOLD, 14);
         FontMetrics metrics = getFontMetrics(font);
 
-        // Set the color of the text to red, and set the font
-        g.setColor(Color.red);
+        // Set the color of the text to orange, and set the font to our instance.
+        g.setColor(Color.orange);
         g.setFont(font);
 
         // Draw the message to the board
-        g.drawString(message, (BOARDWIDTH*PIXELSIZE - metrics.stringWidth(message)) / 2,
-                BOARDHEIGHT*PIXELSIZE / 2);
+        g.drawString(message, (BOARDWIDTH*CELLSIZE - metrics.stringWidth(message)) / 2,
+                BOARDHEIGHT*CELLSIZE / 2);
 
         System.out.println("Game Ended");
 
@@ -184,37 +182,25 @@ public class Board extends JPanel implements ActionListener {
 
             int key = e.getKeyCode();
 
-            if ((key == KeyEvent.VK_LEFT) && (!snake.isMovingRight())) {
-                snake.setMovingLeft(true);
-                snake.setMovingUp(false);
-                snake.setMovingDown(false);
+            if ((key == KeyEvent.VK_LEFT) && (snake.getDirection()!=Snake.DIRECTIONS.RIGHT)) {
+                snake.setDirection(Snake.DIRECTIONS.LEFT);
             }
 
-            if ((key == KeyEvent.VK_RIGHT) && (!snake.isMovingLeft())) {
-                snake.setMovingRight(true);
-                snake.setMovingUp(false);
-                snake.setMovingDown(false);
+            if ((key == KeyEvent.VK_RIGHT) && (snake.getDirection()!=Snake.DIRECTIONS.LEFT)) {
+                snake.setDirection(Snake.DIRECTIONS.RIGHT);
             }
 
-            if ((key == KeyEvent.VK_UP) && (!snake.isMovingDown())) {
-                snake.setMovingUp(true);
-                snake.setMovingRight(false);
-                snake.setMovingLeft(false);
+            if ((key == KeyEvent.VK_UP) && (snake.getDirection()!=Snake.DIRECTIONS.DOWN)) {
+                snake.setDirection(Snake.DIRECTIONS.UP);
             }
 
-            if ((key == KeyEvent.VK_DOWN) && (!snake.isMovingUp())) {
-                snake.setMovingDown(true);
-                snake.setMovingRight(false);
-                snake.setMovingLeft(false);
+            if ((key == KeyEvent.VK_DOWN) && (snake.getDirection()!=Snake.DIRECTIONS.UP)) {
+                snake.setDirection(Snake.DIRECTIONS.DOWN);
             }
 
             if ((key == KeyEvent.VK_ENTER) && (!inGame)) {
 
                 inGame = true;
-                snake.setMovingDown(false);
-                snake.setMovingRight(false);
-                snake.setMovingLeft(false);
-                snake.setMovingUp(false);
 
                 initializeGame();
             }
@@ -227,7 +213,7 @@ public class Board extends JPanel implements ActionListener {
 
     public static int getAllDots() {return TOTALPIXELS;}
 
-    public static int getPixelSize() {return PIXELSIZE;}
+    public static int getCellSize() {return CELLSIZE;}
 
     public static int getBoardWidth() {return BOARDWIDTH;}
 
