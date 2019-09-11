@@ -5,16 +5,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
@@ -49,7 +44,7 @@ public class Board extends JPanel implements ActionListener {
     private Color gameoverTextColour2 = new Color(164,28,87);
     private Color lengthTextColour = new Color(40,12,23);
 
-//    // Images
+//    // Images (if we were using images, which we aren't)
 //    private BufferedImage headImage;
 
     public Board() {
@@ -205,7 +200,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(message2, (BOARDWIDTH*CELLSIZE - metrics2.stringWidth(message2)) / 2,
                 BOARDHEIGHT*CELLSIZE / 2);
 
-        System.out.println("Game Ended");
+        System.out.println("Game ended");
 
     }
 
