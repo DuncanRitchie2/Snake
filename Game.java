@@ -1,6 +1,7 @@
 package Snake;
 
 import javax.swing.*;
+import java.io.IOException;
 
 public class Game extends JFrame {
 

@@ -11,8 +11,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
 
 public class Board extends JPanel implements ActionListener {
 
@@ -22,12 +26,6 @@ public class Board extends JPanel implements ActionListener {
 
     // Width and height of food and every snake-joint; window size will be a multiple.
     private final static int CELLSIZE = 25;
-
-    // The total amount of pixels the game could possibly have.
-    // We don't want less, because the game would end prematurely.
-    // We don't more because there would be no way to let the player win.
-
-    private final static int TOTALPIXELS = (BOARDWIDTH * BOARDHEIGHT);
 
     // Check to see if the game is running.
     private boolean inGame = true;
@@ -47,12 +45,12 @@ public class Board extends JPanel implements ActionListener {
     private Color foodColour = new Color(139,85,86);
     private Color headColour = new Color(57,85,32);
     private Color bodyColour = new Color(102,173,71);
-    private Color textColour1 = new Color(93,17,49);
-    private Color textColour2 = new Color(164,28,87);
-    private Color textColour3 = new Color(40,12,23);
+    private Color gameoverTextColour1 = new Color(93,17,49);
+    private Color gameoverTextColour2 = new Color(164,28,87);
+    private Color lengthTextColour = new Color(40,12,23);
 
 //    // Images
-//    private Image headImage = Toolkit.getDefaultToolkit().getImage("snakeImage.png");
+//    private BufferedImage headImage;
 
     public Board() {
 
@@ -62,8 +60,21 @@ public class Board extends JPanel implements ActionListener {
 
         setPreferredSize(new Dimension(BOARDWIDTH*CELLSIZE, BOARDHEIGHT*CELLSIZE));
 
+//        loadImages();
+
         initialiseGame();
     }
+
+//    private void loadImages() {
+//        try {
+//            File imageFile = new File("snakeHead.jpg");
+//            headImage = ImageIO.read(imageFile);
+//        }
+//        catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     // Used to paint our components to the screen
     @Override
@@ -81,27 +92,31 @@ public class Board extends JPanel implements ActionListener {
 
             // Draw the food.
             g.setColor(foodColour);
-            g.fillRect(food.getFoodX()*CELLSIZE, food.getFoodY()*CELLSIZE, CELLSIZE, CELLSIZE);
+            g.fillOval(food.getFoodX()*CELLSIZE, food.getFoodY()*CELLSIZE, CELLSIZE, CELLSIZE);
 
             // Draw the snake.
             for (int i = 0; i < snake.getLength(); i++) {
-                // Snake's head
+                // Draw the snake's head.
                 if (i == 0) {
                     g.setColor(headColour);
-//                    g.drawImage(headImage,snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE, CELLSIZE, CELLSIZE,null);
-                    g.fillRect(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
+                    g.fillOval(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
                             CELLSIZE, CELLSIZE);
+                    // If we were drawing an image instead of a circle. This code didn't work, so it's commented out.
+//                    g.drawImage(headImage,snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE, CELLSIZE, CELLSIZE,null);
+
+                    // Prepare for drawing body of snake.
                     g.setColor(bodyColour);
-                    // Body of snake
-                } else {
-                    g.fillRect(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
+                }
+                // Draw the snake's body.
+                else {
+                    g.fillOval(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
                             CELLSIZE, CELLSIZE);
                 }
             }
 
             // Draw text announcing the snake's length.
             String lengthMessage = "Length of snake: "+snake.getLength();
-            g.setColor(textColour3);
+            g.setColor(lengthTextColour);
             Font font = new Font("Alegreya", Font.BOLD, 14);
             g.drawString(lengthMessage, CELLSIZE,
                     (int)(BOARDHEIGHT-0.5)*CELLSIZE);
@@ -175,7 +190,7 @@ public class Board extends JPanel implements ActionListener {
         FontMetrics metrics2 = getFontMetrics(font2);
 
         // Set the color & font of the first line of text.
-        g.setColor(textColour1);
+        g.setColor(gameoverTextColour1);
         g.setFont(font1);
 
         // Draw the first line of the message to the board.
@@ -183,7 +198,7 @@ public class Board extends JPanel implements ActionListener {
                 (BOARDHEIGHT-2)*CELLSIZE / 2);
 
         // Set the color & font of the second line.
-        g.setColor(textColour2);
+        g.setColor(gameoverTextColour2);
         g.setFont(font2);
 
         // Draw the second line to the board.
