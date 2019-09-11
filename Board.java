@@ -31,6 +31,9 @@ public class Board extends JPanel implements ActionListener {
     // The interval after which the snake moves, in milliseconds.
     private static int speed = 125;
 
+    // High score across games played.
+    private int highScore = 0;
+
     // Instances of our snake & food.
     private Snake snake;
     private Food food = new Food();
@@ -114,7 +117,13 @@ public class Board extends JPanel implements ActionListener {
             g.setColor(lengthTextColour);
             Font font = new Font("Alegreya", Font.BOLD, 14);
             g.drawString(lengthMessage, CELLSIZE,
-                    (int)(BOARDHEIGHT-0.5)*CELLSIZE);
+                    (int)((BOARDHEIGHT-1.75)*CELLSIZE));
+
+            // Draw text announcing the high score.
+            String highScoreMessage = "High score: "+highScore;
+            g.setColor(gameoverTextColour1);
+            g.drawString(highScoreMessage, CELLSIZE,
+                    (int)((BOARDHEIGHT-1)*CELLSIZE));
 
             // Sync our graphics together.
             Toolkit.getDefaultToolkit().sync();
@@ -200,6 +209,25 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(message2, (BOARDWIDTH*CELLSIZE - metrics2.stringWidth(message2)) / 2,
                 BOARDHEIGHT*CELLSIZE / 2);
 
+        // Initialise the third line, which tells the player their high score.
+        String message3 = "Your high score is "+highScore+".";
+
+        // Compare the latest snake length to the high score and update the message accordingly.
+        if (snake.getLength()>highScore) {
+            highScore = snake.getLength();
+            message3 = "You have a new high score of "+highScore+".";
+        }
+        else if (snake.getLength()==highScore) {
+            message3 = "You have matched your high score of "+highScore+".";
+        }
+
+        // Draw the third line to the board.
+        g.drawString(message3, (BOARDWIDTH*CELLSIZE - metrics2.stringWidth(message3)) / 2,
+                (BOARDHEIGHT+2)*CELLSIZE / 2);
+
+        System.out.println(message3);
+
+        // Console log.
         System.out.println("Game ended");
 
     }
