@@ -47,9 +47,6 @@ public class Board extends JPanel implements ActionListener {
     private Color gameoverTextColour2 = new Color(164,28,87);
     private Color lengthTextColour = new Color(40,12,23);
 
-//    // Images (if we were using images, which we aren't)
-//    private BufferedImage headImage;
-
     public Board() {
 
         addKeyListener(new Keys());
@@ -58,21 +55,8 @@ public class Board extends JPanel implements ActionListener {
 
         setPreferredSize(new Dimension(BOARDWIDTH*CELLSIZE, BOARDHEIGHT*CELLSIZE));
 
-//        loadImages();
-
         initialiseGame();
     }
-
-//    private void loadImages() {
-//        try {
-//            File imageFile = new File("snakeHead.jpg");
-//            headImage = ImageIO.read(imageFile);
-//        }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
 
     // Used to paint our components to the screen
     @Override
@@ -97,10 +81,7 @@ public class Board extends JPanel implements ActionListener {
                 // Draw the snake's head.
                 if (i == 0) {
                     g.setColor(headColour);
-                    g.fillOval(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE,
-                            CELLSIZE, CELLSIZE);
-                    // If we were drawing an image instead of a circle. This code didn't work, so it's commented out.
-//                    g.drawImage(headImage,snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE, CELLSIZE, CELLSIZE,null);
+                    g.fillOval(snake.getSnakeX(i)*CELLSIZE, snake.getSnakeY(i)*CELLSIZE, CELLSIZE, CELLSIZE);
 
                     // Prepare for drawing body of snake.
                     g.setColor(bodyColour);
@@ -268,11 +249,15 @@ public class Board extends JPanel implements ActionListener {
                 snake.setDirection(Snake.DIRECTIONS.DOWN);
             }
 
-            if ((key == KeyEvent.VK_ENTER) && (!inGame)) {
+            if (key == KeyEvent.VK_ENTER) {
+                if (inGame) {
+//                    inGame = false;
+                }
+                else {
+                    inGame = true;
 
-                inGame = true;
-
-                initialiseGame();
+                    initialiseGame();
+                }
             }
         }
     }
