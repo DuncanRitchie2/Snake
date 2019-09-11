@@ -22,8 +22,11 @@ public class Board extends JPanel implements ActionListener {
     // Width and height of food and every snake-joint; window size will be a multiple.
     private final static int CELLSIZE = 25;
 
-    // Check to see if the game is running.
-    private boolean inGame = true;
+    // Enum for game-state.
+    public enum STATES {
+        PLAY,PAUSED,GAMEOVER
+    }
+    private STATES state = STATES.PLAY;
 
     // Timer used to record tick times.
     private Timer timer;
@@ -70,7 +73,7 @@ public class Board extends JPanel implements ActionListener {
     void draw(Graphics g) {
 
         // Only draw if the game is running
-        if (inGame) {
+        if (state!=STATES.GAMEOVER) {
 
             // Draw the food.
             g.setColor(foodColour);
@@ -105,6 +108,22 @@ public class Board extends JPanel implements ActionListener {
             g.setColor(gameoverTextColour1);
             g.drawString(highScoreMessage, CELLSIZE,
                     (int)((BOARDHEIGHT-1)*CELLSIZE));
+
+            // Initialise text saying how to pause/resume.
+            String pausePlayMessage = "Press Enter to resume ";
+            FontMetrics metrics = getFontMetrics(font);
+            if (state == STATES.PLAY) {
+                pausePlayMessage = "Press Enter to pause ";
+
+                // Draw text saying how to change direction.
+                g.setColor(lengthTextColour);
+                String moveMessage = "Use the arrow keys to move";
+                g.drawString(moveMessage, BOARDWIDTH*CELLSIZE-(metrics.stringWidth(moveMessage)),
+                        (int)((BOARDHEIGHT-1.75)*CELLSIZE));
+            }
+            // Draw the text saying how to pause/resume.
+            g.setColor(gameoverTextColour1);
+            g.drawString(pausePlayMessage, BOARDWIDTH*CELLSIZE-(metrics.stringWidth(pausePlayMessage)), (int)((BOARDHEIGHT-1)*CELLSIZE));
 
             // Sync our graphics together.
             Toolkit.getDefaultToolkit().sync();
@@ -147,7 +166,7 @@ public class Board extends JPanel implements ActionListener {
         for (int i = snake.getLength()-1; i > 3; i--) {
             if (snake.getSnakeX(0) == snake.getSnakeX(i)
                     && (snake.getSnakeY(0) == snake.getSnakeY(i))) {
-                inGame = false; // End the game.
+                state = STATES.GAMEOVER; // End the game.
             }
         }
 
@@ -157,7 +176,7 @@ public class Board extends JPanel implements ActionListener {
         }
 
         // If the game has ended, then we stop our timer.
-        if (!inGame) {
+        if (state==STATES.GAMEOVER) {
             timer.stop();
         }
     }
@@ -216,7 +235,7 @@ public class Board extends JPanel implements ActionListener {
     // Run constantly as long as we're in game.
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (inGame) {
+        if (state==STATES.PLAY) {
 
             checkFoodCollisions();
             checkCollisions();
@@ -230,33 +249,38 @@ public class Board extends JPanel implements ActionListener {
 
         @Override
         public void keyPressed(KeyEvent e) {
-
             int key = e.getKeyCode();
 
-            if ((key == KeyEvent.VK_LEFT) && (snake.getDirection()!=Snake.DIRECTIONS.RIGHT)) {
-                snake.setDirection(Snake.DIRECTIONS.LEFT);
-            }
+            if (state == STATES.PLAY) {
+                if ((key == KeyEvent.VK_LEFT) && (snake.getDirection()!=Snake.DIRECTIONS.RIGHT)) {
+                    snake.setDirection(Snake.DIRECTIONS.LEFT);
+                }
 
-            if ((key == KeyEvent.VK_RIGHT) && (snake.getDirection()!=Snake.DIRECTIONS.LEFT)) {
-                snake.setDirection(Snake.DIRECTIONS.RIGHT);
-            }
+                else if ((key == KeyEvent.VK_RIGHT) && (snake.getDirection()!=Snake.DIRECTIONS.LEFT)) {
+                    snake.setDirection(Snake.DIRECTIONS.RIGHT);
+                }
 
-            if ((key == KeyEvent.VK_UP) && (snake.getDirection()!=Snake.DIRECTIONS.DOWN)) {
-                snake.setDirection(Snake.DIRECTIONS.UP);
-            }
+                else if ((key == KeyEvent.VK_UP) && (snake.getDirection()!=Snake.DIRECTIONS.DOWN)) {
+                    snake.setDirection(Snake.DIRECTIONS.UP);
+                }
 
-            if ((key == KeyEvent.VK_DOWN) && (snake.getDirection()!=Snake.DIRECTIONS.UP)) {
-                snake.setDirection(Snake.DIRECTIONS.DOWN);
+                else if ((key == KeyEvent.VK_DOWN) && (snake.getDirection()!=Snake.DIRECTIONS.UP)) {
+                    snake.setDirection(Snake.DIRECTIONS.DOWN);
+                }
             }
 
             if (key == KeyEvent.VK_ENTER) {
-                if (inGame) {
-//                    inGame = false;
-                }
-                else {
-                    inGame = true;
+                switch (state) {
+                    case PLAY:
+                        state = STATES.PAUSED;
+                        break;
+                    case GAMEOVER:
+                        state = STATES.PLAY;
+                        initialiseGame();
+                        break;
+                    case PAUSED:
+                        state = STATES.PLAY;
 
-                    initialiseGame();
                 }
             }
         }
