@@ -185,13 +185,15 @@ public class Board extends JPanel implements ActionListener {
 
         // Create a two-line message telling the player the game is over
         String message1 = "Game over!";
-        String message2 = "Your snake bit itself. It was "+snake.getLength()+" joints long. Press Enter to reset.";
+        String message2 = "Your snake bit itself.  It was "+snake.getLength()+" joints long.  Press Enter to reset.";
 
         // Create new font instances.
         Font font1 = new Font("Alegreya", Font.BOLD, 18);
         Font font2 = new Font("Alegreya", Font.BOLD, 14);
+        Font font4 = new Font("Alegreya", Font.BOLD, 11);
         FontMetrics metrics1 = getFontMetrics(font1);
         FontMetrics metrics2 = getFontMetrics(font2);
+        FontMetrics metrics4 = getFontMetrics(font4);
 
         // Set the color & font of the first line of text.
         g.setColor(gameoverTextColour1);
@@ -226,6 +228,12 @@ public class Board extends JPanel implements ActionListener {
                 (BOARDHEIGHT+2)*CELLSIZE / 2);
 
         System.out.println(message3);
+
+        // Draw a footer with my details.
+        String message4 = "Made by Duncan Ritchie, September 2019      www.duncanritchie.co.uk";
+        g.setFont(font4);
+        g.drawString(message4, (BOARDWIDTH*CELLSIZE - metrics4.stringWidth(message4)) / 2,
+                (BOARDHEIGHT-1)*CELLSIZE);
 
         // Console log.
         System.out.println("Game ended");
