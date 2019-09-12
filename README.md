@@ -7,4 +7,4 @@ Download out/artifacts/Snake_jar ( https://github.com/DuncanRitchie2/java-snake/
 
 Uses the arrow keys.
 
-See also my JavaScript version: https://github.com/DuncanRitchie2/jsSnake .
+See also my JavaScript version: https://github.com/DuncanRitchie2/js-snake .
